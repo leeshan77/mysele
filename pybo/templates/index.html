@@ -1,0 +1,86 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+</head>
+<body>
+    <p><a href="/clock">현재시간</a></p>
+    <p><a href='/itooza/start')>itooza - bs4</a></p>
+    <p id="example">AJAX</p>
+    <input type="text" id="code1" value="005930">
+    <input type="text" id="code2" value="000660">
+    <input type="text" id="code3" value="005380">
+    <input type="button" value="Run" onclick="run()">
+    <input type="button" value="Stop" onclick="stop()">
+
+    <p>naver - bs4</p>
+    <p id="time"></p>
+    <p id="sise"></p>
+
+    <p>daum - ajax</p>
+    <p id="time_3"></p>
+    <p id="daum"></p>
+
+    <script>
+        function run_ajax(){
+            var code1 = $('#code1').val();
+            var code2 = $('#code2').val();
+            var code3 = $('#code3').val();
+            var postdata = {
+                'code1':code1, 'code2':code2, 'code3':code3
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/stock',
+                data: JSON.stringify(postdata),
+                dataType : 'JSON',
+                contentType: "application/json",
+                success: function(res){
+                    $('#sise').text( res.result3.code1 + "   " +
+                        res.result3.code2 + "   " + res.result3.code3 );
+                    $('#time').text( res.now );
+                },
+                error: function(request, status, error){
+                    alert('ajax 통신 실패');
+                    alert(error);
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '/daum',
+                data: JSON.stringify(postdata),
+                dataType : 'JSON',
+                contentType: "application/json",
+                success: function(res){
+                    $('#daum').text( res.result3.code1 + "   " +
+                        res.result3.code2 + "   " + res.result3.code3 );
+                    $('#time_3').text( res.now );
+                },
+                error: function(request, status, error){
+                    alert('ajax 통신 실패');
+                    alert(error);
+                }
+            });
+        }
+
+        var auto_run = null;
+
+        function run() {
+            run_ajax();
+            auto_run = setInterval(run_ajax, 1000);
+            alert("Run 시작되었습니다.")
+        }
+
+        function stop() {
+            if (auto_run != null) {
+                clearInterval(auto_run);
+            }
+            alert("Stop 되었습니다.")
+        }
+
+    </script>
+
+</body>
+</html>
